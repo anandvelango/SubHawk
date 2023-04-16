@@ -1,5 +1,7 @@
 ## Subhawk
-Subhawk is a python program that is used for discovering subdomains associated with a target domain in a fast efficient manner by utilising asynchronous programming techniques. SubHawk enumerates subdomains by reading through a wordlist file line by line, combining each entry with the target domain and it then sends asynchronous HTTP requests to each subdomain. This assists bug bounty hunters and penetration tester
+![image](https://user-images.githubusercontent.com/50573902/232264242-adee7c20-4ad3-49b1-b2e5-ad1be3cd4536.png)
+
+Subhawk is a python tool that is used for discovering subdomains associated with a target domain in a fast efficient manner by utilising asynchronous programming techniques. SubHawk enumerates subdomains by reading through a wordlist file line by line, combining each entry with the target domain and it then sends asynchronous HTTP requests to each subdomain. This assists bug bounty hunters and penetration tester
 
 ## Features
 - Asynchronous (fast results and customisable)
@@ -63,6 +65,6 @@ python3 subhawk.py -d example.com -w <path to file> -s <semaphores: int>
 ```
 
 ## Update Plans
-- add a feature to validate domains and files
+- add a feature to validate domains and files specified by the user
 - find URLs for cloud storage services like S3
 - add more smaller and larger subdomain wordlists
