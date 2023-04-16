@@ -1,1 +1,2 @@
-# Subhawk
+## Subhawk
+Subhawk is a python program that is used for discovering subdomains associated with a target domain in a fast efficient manner by utilising asynchronous programming techniques. SubHawk enumerates subdomains by reading through a wordlist file line by line, combining each entry with the target domain and it then sends asynchronous HTTP requests to each subdomain. This assists bug bounty hunters and penetration tester
