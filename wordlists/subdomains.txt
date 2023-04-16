@@ -622,6 +622,8 @@ sharepoint
 shell
 shop
 shopping
+sign
+signin
 signup
 sip
 site
