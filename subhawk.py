@@ -58,7 +58,7 @@ def parse_args():
     parser.add_argument(
         "-s",
         "--semaphores",
-        help="By default its 60 but adjust it to your needs (anywhere 50-100 is recommended, but anything above your system's capability will cause an error).",
+        help="By default its 100 but adjust it to your needs (anywhere 50-250 is recommended and you can increase it even more if needed)",
         type=int,
         required=False
     )
@@ -76,7 +76,7 @@ def get_semaphores():
         semaphore = asyncio.Semaphore(args.semaphores)
         return semaphore
     else:
-        semaphore = asyncio.Semaphore(60)
+        semaphore = asyncio.Semaphore(100)
         return semaphore
 
 # gets the subdomains from the wordlist file
