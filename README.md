@@ -48,6 +48,7 @@ You can use our current sample wordlist file `wordlists/subdomains.txt` from our
 | -h         | --help          | Show this help message and exit                          |
 
 ## Examples
+![image](https://user-images.githubusercontent.com/50573902/233226148-5f4e1487-4d03-49d6-8147-c0cad0836ae2.png)
 - To get help about the tool:
 ```
 python3 subhawk.py -h
