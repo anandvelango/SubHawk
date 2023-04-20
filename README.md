@@ -44,7 +44,7 @@ You can use our current sample wordlist file `wordlists/subdomains.txt` from our
 | -d         | --domain        | Domain in which you want to enumerate subdomains         |
 | -w         | --wordlist-file | Path to wordlist file                                    |
 | -o         | --output        | Output the results in a .txt file                        |
-| -s         | --semaphores    | Adjust the semaphores (speed) if required (by default it's set to 60) |
+| -s         | --semaphores    | Adjust the semaphores (speed) if required (by default it's set to 100 but change it accordingly) |
 | -h         | --help          | Show this help message and exit                          |
 
 ## Examples
