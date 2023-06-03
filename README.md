@@ -1,7 +1,8 @@
 ## Subhawk
-![image](https://user-images.githubusercontent.com/50573902/232264493-45a7fb5b-4054-467a-a7b7-eb684ca7246d.png)
+![image](https://user-images.githubusercontent.com/50573902/233224889-92c317b9-64a2-42a7-9f24-345a749c33ce.png)
 
-Subhawk is a python tool that is used for discovering subdomains associated with a target domain in a fast efficient manner by utilising asynchronous programming techniques. SubHawk enumerates subdomains by reading through a wordlist file line by line, combining each entry with the target domain and it then sends asynchronous HTTP requests to each subdomain. This assists bug bounty hunters and penetration tester
+
+Subhawk is a python worlist-based tool that is used for discovering subdomains associated with a target domain in a fast efficient manner by utilising asynchronous programming techniques. SubHawk enumerates subdomains by reading through a wordlist file line by line, combining each entry with the target domain and it then sends asynchronous HTTP requests to each subdomain. This assists bug bounty hunters and penetration tester
 
 ## Features
 - Asynchronous (fast results and customisable)
@@ -43,10 +44,11 @@ You can use our current sample wordlist file `wordlists/subdomains.txt` from our
 | -d         | --domain        | Domain in which you want to enumerate subdomains         |
 | -w         | --wordlist-file | Path to wordlist file                                    |
 | -o         | --output        | Output the results in a .txt file                        |
-| -s         | --semaphores    | Adjust the semaphores (speed) if required (by default it's set to 60) |
+| -s         | --semaphores    | Adjust the semaphores (speed) if required (by default it's set to 100 but change it accordingly) |
 | -h         | --help          | Show this help message and exit                          |
 
 ## Examples
+![image](https://user-images.githubusercontent.com/50573902/233226148-5f4e1487-4d03-49d6-8147-c0cad0836ae2.png)
 - To get help about the tool:
 ```
 python3 subhawk.py -h
