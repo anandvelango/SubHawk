@@ -67,6 +67,5 @@ python3 subhawk.py -d example.com -w <path to file> -s <semaphores: int>
 ```
 
 ## Update Plans
-- add a feature to validate domains and files specified by the user
 - find URLs for cloud storage services like S3
 - add more smaller and larger subdomain wordlists

@@ -3,6 +3,8 @@ import asyncio
 import httpx
 import time
 import argparse
+import re
+import sys
 import colorama
 from colorama import Fore
 
@@ -65,10 +67,17 @@ def parse_args():
     
     return parser.parse_args()
 
+# args
 args = parse_args()
-domain = args.domain
-output = args.output
-file = args.wordlist_file
+
+def get_domain():
+    domain = args.domain
+    pattern = re.compile("^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$")
+    if pattern.match(domain) == None:
+        print(f"{Fore.RED}[!]{Fore.RESET} {domain} is not a valid domain")
+        sys.exit(1)
+        
+    return domain 
 
 # gets semaphores (default if not specified by the user)
 def get_semaphores():
@@ -80,7 +89,8 @@ def get_semaphores():
         return semaphore
 
 # gets the subdomains from the wordlist file
-def get_subdomains():    
+def get_subdomains():
+    file = args.wordlist_file    
     f = open(file, "r")
     content = f.read()
     subdomains = content.splitlines()
@@ -102,6 +112,7 @@ async def request(semaphore, url):
 # grabs the subdomains        
 async def main():
     reqs = []
+    domain = get_domain()
     subdomains = get_subdomains()
     semaphore = get_semaphores()
     for subdomain in subdomains:
@@ -117,6 +128,8 @@ async def main():
         results += f"{response}\n"
     
     # if the user specifies to output the results in a file
+    output = args.output
+    file = args.wordlist_file
     if output:
         with open(output, "w") as f:
             f.write("SubHawk Results\n")
@@ -129,7 +142,7 @@ async def main():
 
 if __name__ == "__main__":        
     
-    print(f"{Fore.LIGHTBLUE_EX}[*]{Fore.RESET} Enumerating subdomains for {Fore.LIGHTGREEN_EX}{domain}\n")
+    print(f"{Fore.LIGHTBLUE_EX}[*]{Fore.RESET} Enumerating subdomains for {Fore.LIGHTGREEN_EX}{get_domain()}\n")
 
     start_time = time.perf_counter()        
     asyncio.run(main())
