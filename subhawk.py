@@ -70,6 +70,7 @@ def parse_args():
 # args
 args = parse_args()
 
+# gets and validates the domain received by the user
 def get_domain():
     domain = args.domain
     pattern = re.compile("^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$")
