@@ -6,6 +6,7 @@ import argparse
 import re
 import sys
 import colorama
+from tqdm import tqdm
 from colorama import Fore
 
 colorama.init(autoreset=True)
@@ -102,17 +103,22 @@ def get_subdomains():
 # handles each request made to the subdomain
 async def request(semaphore, url):
     async with semaphore:
-        async with httpx.AsyncClient(timeout=5) as client:
+        async with httpx.AsyncClient() as client:
             try: 
                 response = await client.get(url)
                 if response.status_code < 400:
-                    return url
+                    # print(url, response.status_code)
+                    return {
+                        "url": url,
+                        "status_code": response.status_code
+                    }
             except (httpx.RequestError, httpx.TimeoutException):
                 pass
 
 # grabs the subdomains        
 async def main():
     reqs = []
+    responses = []
     domain = get_domain()
     subdomains = get_subdomains()
     semaphore = get_semaphores()
@@ -120,13 +126,24 @@ async def main():
         url = f"http://{subdomain}.{domain}"
         req = asyncio.ensure_future(asyncio.ensure_future(request(semaphore, url)))
         reqs.append(req)
-            
-    responses = await asyncio.gather(*reqs)
+          
+    for future in tqdm(total=len(reqs), iterable=asyncio.as_completed(reqs)):
+        result = await future
+        responses.append(result)
+        
     valid_responses = filter(lambda x: x != None, responses)
     results = ""
+    
     for response in valid_responses:
-        print(f"{Fore.LIGHTGREEN_EX}[!]{Fore.RESET} {response}")   
-        results += f"{response}\n"
+        # set status code color to green for successful connections
+        status_code_color = Fore.GREEN
+        
+        # set status code color to yellow for redirection status codes
+        if response['status_code'] // 100 == 3:
+            status_code_color = Fore.YELLOW
+            
+        print(f"{Fore.LIGHTGREEN_EX}[!] {status_code_color}{response['status_code']} {Fore.RESET}{response['url']}")   
+        results += f"{response['url']}\n"
     
     # if the user specifies to output the results in a file
     output = args.output
