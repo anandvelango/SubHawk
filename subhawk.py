@@ -118,7 +118,7 @@ async def main():
     semaphore = get_semaphores()
     for subdomain in subdomains:
         url = f"http://{subdomain}.{domain}"
-        req = asyncio.ensure_future(asyncio.ensure_future(request(semaphore, url)))
+        req = asyncio.ensure_future(request(semaphore, url))
         reqs.append(req)
             
     responses = await asyncio.gather(*reqs)
