@@ -65,6 +65,13 @@ def parse_args():
         type=int,
         required=False
     )
+    parser.add_argument(
+        "-T",
+        "--timeout",
+        help="Request timeout in seconds (default is 5s)",
+        type=int,
+        required=False
+    )
     
     return parser.parse_args()
 
@@ -89,6 +96,13 @@ def get_semaphores():
     else:
         semaphore = asyncio.Semaphore(100)
         return semaphore
+   
+# get timeout (default if not specified by the user)
+def get_timeout():
+    if args.timeout:
+        return args.timeout
+    else:
+        return 5
 
 # gets the subdomains from the wordlist file
 def get_subdomains():
@@ -101,9 +115,9 @@ def get_subdomains():
     return subdomains
 
 # handles each request made to the subdomain
-async def request(semaphore, url):
+async def request(semaphore, timeout, url):
     async with semaphore:
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=timeout) as client:
             try: 
                 response = await client.get(url)
                 if response.status_code < 400:
@@ -120,11 +134,12 @@ async def main():
     reqs = []
     responses = []
     domain = get_domain()
+    timeout = get_timeout()
     subdomains = get_subdomains()
     semaphore = get_semaphores()
     for subdomain in subdomains:
         url = f"http://{subdomain}.{domain}"
-        req = asyncio.ensure_future(asyncio.ensure_future(request(semaphore, url)))
+        req = asyncio.ensure_future(asyncio.ensure_future(request(semaphore, timeout, url)))
         reqs.append(req)
           
     for future in tqdm(total=len(reqs), iterable=asyncio.as_completed(reqs)):
