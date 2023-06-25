@@ -121,7 +121,6 @@ async def request(semaphore, timeout, url):
             try: 
                 response = await client.get(url)
                 if response.status_code < 400:
-                    # print(url, response.status_code)
                     return {
                         "url": url,
                         "status_code": response.status_code
@@ -158,7 +157,7 @@ async def main():
             status_code_color = Fore.YELLOW
             
         print(f"{Fore.LIGHTGREEN_EX}[!] {status_code_color}{response['status_code']} {Fore.RESET}{response['url']}")   
-        results += f"{response['url']}\n"
+        results += f"{response['status_code']} {response['url']}\n"
     
     # if the user specifies to output the results in a file
     output = args.output
