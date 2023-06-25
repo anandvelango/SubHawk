@@ -6,6 +6,7 @@ import argparse
 import re
 import sys
 import colorama
+from tqdm import tqdm
 from colorama import Fore
 
 colorama.init(autoreset=True)
@@ -64,6 +65,13 @@ def parse_args():
         type=int,
         required=False
     )
+    parser.add_argument(
+        "-T",
+        "--timeout",
+        help="Request timeout in seconds (default is 5s)",
+        type=int,
+        required=False
+    )
     
     return parser.parse_args()
 
@@ -88,6 +96,13 @@ def get_semaphores():
     else:
         semaphore = asyncio.Semaphore(100)
         return semaphore
+   
+# get timeout (default if not specified by the user)
+def get_timeout():
+    if args.timeout:
+        return args.timeout
+    else:
+        return 5
 
 # gets the subdomains from the wordlist file
 def get_subdomains():
@@ -100,33 +115,49 @@ def get_subdomains():
     return subdomains
 
 # handles each request made to the subdomain
-async def request(semaphore, url):
+async def request(semaphore, timeout, url):
     async with semaphore:
-        async with httpx.AsyncClient(timeout=5) as client:
+        async with httpx.AsyncClient(timeout=timeout) as client:
             try: 
                 response = await client.get(url)
                 if response.status_code < 400:
-                    return url
+                    return {
+                        "url": url,
+                        "status_code": response.status_code
+                    }
             except (httpx.RequestError, httpx.TimeoutException):
                 pass
 
 # grabs the subdomains        
 async def main():
     reqs = []
+    responses = []
     domain = get_domain()
+    timeout = get_timeout()
     subdomains = get_subdomains()
     semaphore = get_semaphores()
     for subdomain in subdomains:
         url = f"http://{subdomain}.{domain}"
-        req = asyncio.ensure_future(asyncio.ensure_future(request(semaphore, url)))
+        req = asyncio.ensure_future(asyncio.ensure_future(request(semaphore, timeout, url)))
         reqs.append(req)
-            
-    responses = await asyncio.gather(*reqs)
+          
+    for future in tqdm(total=len(reqs), iterable=asyncio.as_completed(reqs)):
+        result = await future
+        responses.append(result)
+        
     valid_responses = filter(lambda x: x != None, responses)
     results = ""
+    
     for response in valid_responses:
-        print(f"{Fore.LIGHTGREEN_EX}[!]{Fore.RESET} {response}")   
-        results += f"{response}\n"
+        # set status code color to green for successful connections
+        status_code_color = Fore.GREEN
+        
+        # set status code color to yellow for redirection status codes
+        if response['status_code'] // 100 == 3:
+            status_code_color = Fore.YELLOW
+            
+        print(f"{Fore.LIGHTGREEN_EX}[!] {status_code_color}{response['status_code']} {Fore.RESET}{response['url']}")   
+        results += f"{response['status_code']} {response['url']}\n"
     
     # if the user specifies to output the results in a file
     output = args.output
